@@ -1,4 +1,5 @@
 from products.infrastructure.elastic_client import elastic
+from products.services.vector_service import generate_embedding, build_product_text
 
 INDEX_NAME = "products"
 
@@ -34,6 +35,12 @@ def index_product(product) -> dict:
     """
     es = elastic.get_client()
     try:
+        text = build_product_text(product)
+        embedding = generate_embedding(text)
+
+        # Save embedding back to Django DB (update_fields avoids re-triggering signals)
+        product.embedding = embedding
+        Product.objects.filter(id=product.id).update(embedding=embedding)
         doc = product_to_dict(product)
         response = es.index(
             index=INDEX_NAME,
@@ -43,7 +50,7 @@ def index_product(product) -> dict:
 
         return {"status": True, "result": response["result"]}
     except Exception as e:
-        print(f"[Indexer] Failed to index product {product.variant_handle}: {e} ,{response}")
+        print(f"[Indexer] Failed to index product {product.variant_handle}: {e} ")
         return {"status": False, "error": str(e)}
 
 
