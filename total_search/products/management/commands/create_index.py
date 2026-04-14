@@ -24,7 +24,7 @@ class Command(BaseCommand):
                     "material":        {"type": "keyword"},
                     "is_active":       {"type": "boolean"},
                     "image_url":       {"type": "keyword", "index": False},
-                    "embedding":       {"type": "dense_vector", "dims": 384},
+                 
                 }
             }
         }
