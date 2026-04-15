@@ -19,11 +19,12 @@ class Product(models.Model):
     embedding = models.JSONField(null=True, blank=True)
 
     # Visual Fields
-    image_url      = models.URLField(blank=True)
+    image_url= models.ImageField(upload_to="products/", blank=True, null=True)
     variant_handle = models.CharField(max_length=255, unique=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    visual_embedding = models.JSONField(null=True, blank=True)
+    image_url = models.URLField(blank=True, default="")
     def __str__(self):
         return self.name
